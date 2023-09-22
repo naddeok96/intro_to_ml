@@ -161,3 +161,4 @@ cython_debug/
 
 iris.csv
 data/*
+wandb/*
