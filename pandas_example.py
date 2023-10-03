@@ -28,8 +28,8 @@ print(df.describe())
 
 # Analyze individual columns
 # Mean of sepal_length
-mean_sepal_length = df['sepal_length'].mean()
-print(f"\nMean of sepal_length: {mean_sepal_length}")
+mean_sepal_width = df['sepal_width'].mean()
+print(f"\nMean of sepal_length: {mean_sepal_width}")
 
 # Median of sepal_width
 median_sepal_width = df['sepal_width'].median()
