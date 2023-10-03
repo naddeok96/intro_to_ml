@@ -12,7 +12,11 @@ wandb.init(project="mnist-pytorch", entity="naddeok")
 
 # Load MNIST dataset without any normalization
 print("Loading MNIST dataset without normalization...")
-trainset = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transforms.ToTensor())
+trainset = torchvision.datasets.MNIST(root='./data', 
+                                    train=True, 
+                                    download=True, 
+                                    transform=transforms.ToTensor())
+
 trainloader = DataLoader(trainset, batch_size=1000, shuffle=False)
 
 # Calculate mean and std
