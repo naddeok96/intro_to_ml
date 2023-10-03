@@ -39,7 +39,8 @@ markers = {'Iris-setosa': 'o', 'Iris-versicolor': 'x', 'Iris-virginica': 's'}
 
 # Sepal Length vs Sepal Width
 for species, group in df.groupby('class'):
-    axs[0].scatter(group['sepal_length'], group['sepal_width'], color=colors[species], marker=markers[species], label=species)
+    axs[0].scatter(group['sepal_length'], group['sepal_width'], 
+                   color=colors[species], marker=markers[species], label=species)
 axs[0].set_title('Sepal Length vs Sepal Width')
 axs[0].set_xlabel('Sepal Length (cm)')
 axs[0].set_ylabel('Sepal Width (cm)')
