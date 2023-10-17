@@ -35,14 +35,21 @@ plt.close()
 
 # Decision Tree: Decision Boundary
 dt = DecisionTreeClassifier()
-dt.fit(X_train[['sepal_length', 'sepal_width']], y_train)
+dt.fit(X_train[['petal_length', 'petal_width']], y_train)
+# dt.fit(X_train[['sepal_length', 'sepal_width']], y_train)
 xx, yy = np.meshgrid(np.linspace(X['sepal_length'].min(), X['sepal_length'].max(), 100),
                      np.linspace(X['sepal_width'].min(), X['sepal_width'].max(), 100))
+
+# xx, yy = np.meshgrid(np.linspace(X['petal_length'].min(), X['petal_length'].max(), 100),
+#                      np.linspace(X['petal_width'].min(), X['petal_width'].max(), 100))
 Z = dt.predict(np.c_[xx.ravel(), yy.ravel()])
 Z = Z.reshape(xx.shape)
 plt.contourf(xx, yy, Z, alpha=0.8)
 for label in np.unique(y_encoded):
-    plt.scatter(X_train['sepal_length'][y_train == label], X_train['sepal_width'][y_train == label], label=label_encoder.classes_[label])
+    plt.scatter(X_train['sepal_length'][y_train == label], 
+                X_train['sepal_width'][y_train == label], 
+                label=label_encoder.classes_[label])
+
 plt.title('Decision Boundary for Decision Tree')
 plt.xlabel('Sepal Length')
 plt.ylabel('Sepal Width')
@@ -71,3 +78,4 @@ ConfusionMatrixDisplay(svc_cm, display_labels=label_encoder.classes_).plot()
 plt.title('Confusion Matrix for Support Vector Machine')
 plt.savefig('sklearn_figures/support_vector_machine_cm.png')
 plt.close()
+
