@@ -1,105 +1,172 @@
-# Training Script (`train.py`)
 
-## Overview
+# Neural Network Training and Testing Framework
 
-The `train.py` script is designed for training Convolutional Neural Networks (CNN) and Feedforward Neural Networks (NN) using the PyTorch framework. It also supports logging metrics to Weights and Biases (wandb). The script reads configurations from YAML files for both the network and training settings.
+This framework is designed for training and testing Convolutional Neural Networks (CNN) and Feedforward Neural Networks (NN) using the PyTorch framework. It also supports logging metrics to Weights and Biases (wandb). The framework reads configurations from YAML files for both the network and training/testing settings.
 
-## Usage
+## Table of Contents
 
-To run the script, use the following command:
+1. [Training Script (`train.py`)](#training-script-trainpy)
+2. [Testing Script (`test.py`)](#testing-script-testpy)
+3. [Fully Connected Neural Network (`nn.py`)](#fully-connected-neural-network-nnpy)
+4. [Convolutional Neural Network (`cnn.py`)](#convolutional-neural-network-cnnpy)
+5. [Bash Scripts (`scripts/train.sh` and `scripts/test.sh`)](#bash-scripts-scriptstrainsh-and-scriptstestsh)
+
+---
+
+### Training Script (`train.py`)
+
+#### Overview
+
+The `train.py` script is designed for training CNNs and NNs. 
+
+#### Usage
+
+To run the script:
 
 ```
 python train.py -n <network_config.yaml> -t <train_config.yaml> [-p <wandb_project> -e <wandb_entity>]
 ```
 
-## Configuration Options
+#### Configuration Options
 
-### Example Training Configuration
+The YAML configuration files in the `cfgs/` directory can affect various aspects of training:
 
-Here is an example of a training configuration YAML file:
+- `batch_size`: Controls the number of samples per batch.
+- `learning_rate`: Sets the learning rate for the optimizer.
+- `epochs`: Specifies the number of training epochs.
+- `optimizer_type`: Chooses the type of optimizer (e.g., Adam, SGD).
+- `annealing_type`: Chooses the type of learning rate scheduler.
 
-```
-batch_size: 32
-learning_rate: 0.001
-epochs: 10
-transform_list:
-  - name: RandomHorizontalFlip
-  - name: RandomCrop
-    size: 28
-    padding: 4
-  - name: ToTensor
-  - name: Normalize
-    mean: [0.1307]
-    std: [0.3081]
-optimizer_type: Adam
-optimizer_hyperparams:
-  betas: [0.9, 0.999]
-  eps: 1e-08
-  weight_decay: 0
-annealing_type: StepLR
-annealing_hyperparams:
-  step_size: 5
-  gamma: 0.1
-```
+#### Functions
 
-### Example Network Configurations
+- `get_transforms(transform_cfg)`: Generates a composition of transformations based on the provided configuration.
+- `get_optimizer(optimizer_type, model, learning_rate, optimizer_hyperparams)`: Initializes and returns the optimizer based on the given parameters.
+- `get_scheduler(annealing_type, optimizer, hyperparams)`: Initializes and returns the learning rate scheduler based on given parameters.
+- `train(net_cfg_path, train_cfg_path, wandb_run=None)`: Main function to train the model based on given configurations.
 
-1. For CNN:
+---
+
+### Testing Script (`test.py`)
+
+#### Overview
+
+The `test.py` script is designed for testing CNNs and NNs.
+
+#### Usage
+
+To run the script:
 
 ```
-model_type: CNN
-input_channels: 1
-num_classes: 10
-conv_layers:
-  - { out_channels: 64, kernel_size: 3, stride: 1, padding: 1, batch_norm: True, max_pool: True }
-  - { out_channels: 128, kernel_size: 3, stride: 1, padding: 1, batch_norm: False, max_pool: True }
-  - { out_channels: 256, kernel_size: 3, stride: 1, padding: 1, batch_norm: True, max_pool: False }
-  - { out_channels: 512, kernel_size: 3, stride: 1, padding: 1, batch_norm: False, max_pool: False }
-fc_layers:
-  - 512
-  - 256
-  - 128
-  - 64
+python test.py -n <network_config.yaml> -t <test_config.yaml> [-p <wandb_project> -e <wandb_entity>]
 ```
 
-2. For NN:
+#### Configuration Options
+
+The YAML configuration files in the `cfgs/` directory can affect various aspects of testing:
+
+- `batch_size`: Controls the number of samples per batch during testing.
+- `transform_list`: Specifies image transformations for preprocessing.
+
+#### Functions
+
+- `get_transforms(transform_cfg)`: Generates a composition of transformations based on the provided configuration.
+- `test(model, testloader, wandb_run=None)`: Main function to test the model and optionally log metrics to wandb.
+- `run_test(net_cfg_path, test_cfg_path, wandb_run=None)`: Load configurations, initialize the model, and run the test.
+
+---
+
+### Fully Connected Neural Network (`nn.py`)
+
+#### Overview
+
+Defines a fully connected neural network (NN) using PyTorch.
+
+#### Configuration Options
+
+The YAML configuration files in the `cfgs/` directory can affect the architecture of the NN:
+
+- `input_features`: Sets the number of input features.
+- `num_classes`: Sets the number of output classes.
+- `fc_layers`: Specifies the number of neurons in each fully connected layer.
+
+#### Class Definition
+
+- `NN(nn.Module)`
+
+#### Methods
+
+- `__init__(self, cfg_file)`: Constructor that initializes the model based on the YAML configuration file.
+- `forward(self, x)`: Forward pass through the network.
+
+---
+
+### Convolutional Neural Network (`cnn.py`)
+
+#### Overview
+
+Defines a Convolutional Neural Network (CNN) using PyTorch.
+
+#### Configuration Options
+
+The YAML configuration files in the `cfgs/` directory can affect the architecture of the CNN:
+
+- `input_channels`: Sets the number of input channels.
+- `num_classes`: Sets the number of output classes.
+- `conv_layers`: Specifies the parameters for each convolutional layer.
+- `fc_layers`: Specifies the number of neurons in each fully connected layer.
+
+#### Class Definition
+
+- `CNN(nn.Module)`
+
+#### Methods
+
+- `__init__(self, cfg_file)`: Constructor that initializes the model based on the YAML configuration file.
+- `forward(self, x)`: Forward pass through the network.
+- `_get_flatten_size(self)`: Calculates the size of the flattened input for the fully connected layers.
+
+---
+
+### Bash Scripts (`scripts/train.sh` and `scripts/test.sh`)
+
+#### Overview
+
+These bash scripts are used to run the training and testing Python scripts, respectively.
+
+#### Usage
+
+To run the training script:
 
 ```
-model_type: NN
-input_features: 784
-num_classes: 10
-fc_layers:
-  - 1024
-  - 512
-  - 256
-  - 128
-  - 64
-  - 32
+bash scripts/train.sh
 ```
 
-## Functions
-
-### `get_transforms(transform_cfg)`
-
-- Generates a composition of transformations based on the provided configuration.
-
-### `get_optimizer(optimizer_type, model, learning_rate, optimizer_hyperparams)`
-
-- Initializes and returns the optimizer based on the given parameters.
-
-### `get_scheduler(annealing_type, optimizer, hyperparams)`
-
-- Initializes and returns the learning rate scheduler based on given parameters.
-
-### `train(net_cfg_path, train_cfg_path, wandb_run=None)`
-
-- Main function to train the model based on given configurations.
-
-## Example Code
-
-To train a CNN model with specific configurations and log metrics to a wandb project:
+To run the testing script:
 
 ```
-python train.py -n cnn_config.yaml -t train_config.yaml -p MyWandbProject -e MyWandbEntity
+bash scripts/test.sh
 ```
+
+#### Script Content
+
+For `train.sh`:
+
+```
+#!/bin/bash
+python3 train.py \\
+        --net_cfg_path cfgs/models/fc_small.yaml \\
+        --train_cfg_path cfgs/train/simple.yaml \\
+        --wandb_project yaml_style \\
+        --wandb_entity naddeok
+```
+
+For `test.sh`:
+
+```
+#!/bin/bash
+python3 test.py \\
+        --net_cfg_path cfgs/models/fc_small.yaml \\
+        --test_cfg_path cfgs/test/simple.yaml \\
+        --wandb_project yaml_style \\
+        --wandb_entity naddeok
 ```
