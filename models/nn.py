@@ -38,6 +38,15 @@ class NN(nn.Module):
         
         self.fcs.append(nn.Linear(in_features, self.num_classes))
     
+        # Load pretrained weights if specified in cfg
+        if config.get('pretrained_weights', None):
+            pretrained_weights_path = config['pretrained_weights']
+            if os.path.exists(pretrained_weights_path):
+                self.load_state_dict(torch.load(pretrained_weights_path))
+                print(f"Loaded pretrained weights from {pretrained_weights_path}")
+            else:
+                print(f"Warning: Pretrained weights file {pretrained_weights_path} not found.")
+    
     def forward(self, x):
         """
         Forward pass through the network.
