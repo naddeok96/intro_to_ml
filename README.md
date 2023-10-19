@@ -8,9 +8,9 @@ The `train.py` script is designed for training Convolutional Neural Networks (CN
 
 To run the script, use the following command:
 
-'''
+```
 python train.py -n <network_config.yaml> -t <train_config.yaml> [-p <wandb_project> -e <wandb_entity>]
-'''
+```
 
 ## Configuration Options
 
@@ -18,7 +18,7 @@ python train.py -n <network_config.yaml> -t <train_config.yaml> [-p <wandb_proje
 
 Here is an example of a training configuration YAML file:
 
-'''
+```
 batch_size: 32
 learning_rate: 0.001
 epochs: 10
@@ -40,13 +40,13 @@ annealing_type: StepLR
 annealing_hyperparams:
   step_size: 5
   gamma: 0.1
-'''
+```
 
 ### Example Network Configurations
 
 1. For CNN:
 
-'''
+```
 model_type: CNN
 input_channels: 1
 num_classes: 10
@@ -60,11 +60,11 @@ fc_layers:
   - 256
   - 128
   - 64
-'''
+```
 
 2. For NN:
 
-'''
+```
 model_type: NN
 input_features: 784
 num_classes: 10
@@ -75,7 +75,7 @@ fc_layers:
   - 128
   - 64
   - 32
-'''
+```
 
 ## Functions
 
@@ -99,7 +99,7 @@ fc_layers:
 
 To train a CNN model with specific configurations and log metrics to a wandb project:
 
-'''
+```
 python train.py -n cnn_config.yaml -t train_config.yaml -p MyWandbProject -e MyWandbEntity
-'''
-'''
+```
+```
