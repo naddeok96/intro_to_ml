@@ -13,3 +13,5 @@ transform_list:
     mean: [0.1307]
     std: [0.3081]
 optimizer_type: SGD
+save_every: 1
+test_every: 1
