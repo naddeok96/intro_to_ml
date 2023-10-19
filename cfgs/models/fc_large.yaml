@@ -1,0 +1,35 @@
+#   ____                  
+#  |  _ \  ___  ___ _ __  
+#  | | | |/ _ \/ _ \ '_ \ 
+#  | |_| |  __/  __/ |_) |
+#  |____/ \___|\___| .__/ 
+#                  |_|    
+
+# Configuration for a deep fully connected network on MNIST data
+model_type: NN
+
+# Number of input features (MNIST images are 28*28 = 784)
+input_features: 784
+
+# Number of output classes (MNIST has 10 classes: digits 0-9)
+num_classes: 10
+
+# Fully connected layers
+fc_layers:
+  # FC Layer 1: 1024 neurons
+  - 1024
+
+  # FC Layer 2: 512 neurons
+  - 512
+
+  # FC Layer 3: 256 neurons
+  - 256
+
+  # FC Layer 4: 128 neurons
+  - 128
+
+  # FC Layer 5: 64 neurons
+  - 64
+  
+  # FC Layer 6: 32 neurons
+  - 32

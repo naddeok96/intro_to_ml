@@ -1,0 +1,30 @@
+#   ____ _   _ _   _  __   __ _    __  __ _     
+#  / ___| \ | | \ | | \ \ / // \  |  \/  | |    
+# | |   |  \| |  \| |  \ V // _ \ | |\/| | |    
+# | |___| |\  | |\  |   | |/ ___ \| |  | | |___ 
+#  \____|_| \_|_| \_|   |_/_/   \_\_|  |_|_____|
+
+# Configuration for MNIST model
+model_type: CNN
+
+# Number of input channels (grayscale images have 1 channel)
+input_channels: 1
+
+# Number of output classes (MNIST has 10 classes: digits 0-9)
+num_classes: 10
+
+# Convolutional layers
+conv_layers:
+  # Conv Layer 1: Input=28x28x1, Output=28x28x32
+  - { out_channels: 32, kernel_size: 3, stride: 1, padding: 1, batch_norm: False, max_pool: False}
+  
+  # Conv Layer 2: Input=28x28x32, Output=28x28x64
+  - { out_channels: 64, kernel_size: 3, stride: 1, padding: 1, batch_norm: False, max_pool: False}
+
+# Fully connected layers
+fc_layers:
+  # FC Layer 1: 128 neurons
+  - 128
+  
+  # FC Layer 2: 64 neurons
+  - 64
