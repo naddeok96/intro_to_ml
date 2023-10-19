@@ -14,7 +14,7 @@ mean = torch.tensor([0.1307])
 std = torch.tensor([0.3081])
 
 # Initialize wandb
-wandb.init(project="mnist-pytorch", entity="naddeok") #, mode="disabled")
+# wandb.init(project="mnist-pytorch", entity="naddeok") #, mode="disabled")
 
 if (mean is None) or (std is None):
     # Load MNIST dataset without any normalization
@@ -112,9 +112,9 @@ for epoch in range(num_epochs):
         correct = (predicted == labels).sum().item()
         accuracy = correct / len(labels)
 
-        # Log loss and accuracy to wandb
-        wandb.log({ "loss": loss.item(),
-                    "accuracy": accuracy})
+        # # Log loss and accuracy to wandb
+        # wandb.log({ "loss": loss.item(),
+        #             "accuracy": accuracy})
         
         # Update tqdm progress bar with fixed number of decimals for loss and accuracy
         pbar.set_postfix({"Loss": f"{loss.item():.4f}", "Accuracy": f"{accuracy:.4f}"})
