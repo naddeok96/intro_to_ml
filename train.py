@@ -5,7 +5,19 @@
   | || | | (_| | | | | |  __/ |   
   |_||_|  \__,_|_|_| |_|\___|_|   
 
+Training and optional testing script for neural network models using PyTorch and wandb for logging.
+
+This script provides a way to train Convolutional Neural Networks (CNN) and 
+Feedforward Neural Networks (NN) using the PyTorch framework. It reads the
+network and training configurations from YAML files and optionally logs metrics
+to Weights and Biases (wandb). Additionally, the script can call a test function
+to evaluate the model if specified in the training configuration.
+
+Usage:
+  python <script_name>.py -n <network_config.yaml> -t <train_config.yaml> [-p <wandb_project> -e <wandb_entity>]
+
 '''
+import os
 import wandb
 import torch
 import torchsummary
@@ -19,6 +31,7 @@ import yaml
 import argparse
 from tqdm import tqdm
 
+from test import test
 from models.nn import NN
 from models.cnn import CNN 
 
@@ -127,9 +140,15 @@ def train(net_cfg_path, train_cfg_path, wandb_run=None):
     # Get the transformations to apply on images
     transform = get_transforms(training_config.get('transform_list', [{'name': 'ToTensor'}]))
 
-    # Load and preprocess the dataset
+    # Load and preprocess the train dataset
     trainset = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transform)
     trainloader = DataLoader(trainset, batch_size=training_config['batch_size'], shuffle=True)
+
+    # Load and preprocess test dataset
+    test_every = training_config.get('test_every', None)
+    if test_every:  # Load testloader if test_every is specified
+        testset = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transform)
+        testloader = DataLoader(testset, batch_size=training_config['batch_size'], shuffle=False)
 
     # Initialize loss function
     criterion = nn.CrossEntropyLoss()
@@ -147,6 +166,14 @@ def train(net_cfg_path, train_cfg_path, wandb_run=None):
     scheduler_type = training_config.get('annealing_type', None)
     scheduler_hyperparams = training_config.get('annealing_hyperparams', {})
     scheduler = get_scheduler(scheduler_type, optimizer, scheduler_hyperparams)
+
+    test_every = training_config.get('test_every', None)
+    save_every = training_config.get('save_every', None)
+
+    # Create folder for pretrained_weights only if save_every is not None or False
+    if save_every:
+        if not os.path.exists('pretrained_weights'):
+            os.makedirs('pretrained_weights')
 
     # Epoch loop
     for epoch in tqdm(range(training_config['epochs']), desc='Epoch'):
@@ -167,6 +194,19 @@ def train(net_cfg_path, train_cfg_path, wandb_run=None):
             if wandb_run:
                 wandb_run.log({"Loss": loss.item()})
             
+        # Call the test script every N epochs if specified
+        if test_every and (epoch + 1) % test_every == 0:
+            test(model, testloader, wandb_run)
+        
+        # Save the model every N epochs if specified
+        if save_every and (epoch + 1) % save_every == 0:
+            save_path = f"pretrained_weights/"
+            if wandb_run:
+                save_path += f"{wandb_run.project}_{wandb_run.name}_epoch_{epoch+1}.pth"
+            else:
+                save_path += f"{os.path.basename(net_cfg_path).replace('.yaml', '')}_{os.path.basename(train_cfg_path).replace('.yaml', '')}_epoch_{epoch+1}.pth"
+            torch.save(model.state_dict(), save_path)
+
         if scheduler:
             scheduler.step()
 
