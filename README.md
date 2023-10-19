@@ -1,3 +1,28 @@
+```
+ _____    _______             _     
+|  __ \  |__   __|           | |    
+| |__) |   _| | ___  _ __ ___| |__  
+|  ___/ | | | |/ _ \| '__/ __| '_ \ 
+| |   | |_| | | (_) | | | (__| | | |
+|_|    \__, |_|\___/|_|  \___|_| |_|
+        __/ |                       
+       |___/                        
+ _____                  _                           _             
+|  __ \                | |                         (_)            
+| |  | | ___  ___ _ __ | |     ___  __ _ _ __ _ __  _ _ __   __ _ 
+| |  | |/ _ \/ _ \ '_ \| |    / _ \/ _` | '__| '_ \| | '_ \ / _` |
+| |__| |  __/  __/ |_) | |___|  __/ (_| | |  | | | | | | | | (_| |
+|_____/ \___|\___| .__/|______\___|\__,_|_|  |_| |_|_|_| |_|\__, |
+                 | |                                         __/ |
+                 |_|                                        |___/ 
+ ______                                           _    
+|  ____|                                         | |   
+| |__ _ __ __ _ _ __ ___   _____      _____  _ __| | __
+|  __| '__/ _` | '_ ` _ \ / _ \ \ /\ / / _ \| '__| |/ /
+| |  | | | (_| | | | | | |  __/\ V  V / (_) | |  |   < 
+|_|  |_|  \__,_|_| |_| |_|\___| \_/\_/ \___/|_|  |_|\_\
+                                                      
+ ```                                                     
 
 # Neural Network Training and Testing Framework
 
@@ -5,11 +30,108 @@ This framework is designed for training and testing Convolutional Neural Network
 
 ## Table of Contents
 
-1. [Training Script (`train.py`)](#training-script-trainpy)
-2. [Testing Script (`test.py`)](#testing-script-testpy)
-3. [Fully Connected Neural Network (`nn.py`)](#fully-connected-neural-network-nnpy)
-4. [Convolutional Neural Network (`cnn.py`)](#convolutional-neural-network-cnnpy)
-5. [Bash Scripts (`scripts/train.sh` and `scripts/test.sh`)](#bash-scripts-scriptstrainsh-and-scriptstestsh)
+1. [Installing Dependencies](#installing-dependencies)
+2. [Fully Connected Neural Network (`nn.py`)](#fully-connected-neural-network-nnpy)
+3. [Convolutional Neural Network (`cnn.py`)](#convolutional-neural-network-cnnpy)
+4. [Training Script (`train.py`)](#training-script-trainpy)
+5. [Testing Script (`test.py`)](#testing-script-testpy)
+6. [Bash Scripts (`scripts/train.sh` and `scripts/test.sh`)](#bash-scripts-scriptstrainsh-and-scriptstestsh)
+
+---
+
+# Setting Up a Virtual Environment
+
+This guide will walk you through the steps to create a new virtual environment, install the required dependencies specified in the `requirements.txt` file.
+
+## Prerequisites
+
+Make sure you have the following installed on your system:
+
+- Python 3.6 or later
+- Git
+- W&B account (sign up [here](https://wandb.ai/site))
+
+## Creating a Virtual Environment
+
+1. Clone the repository to your local machine.
+
+   ```bash
+   git clone https://github.com/<username>/<repository_name>.git
+   ```
+
+2. Navigate to the project directory.
+    ```bash
+    cd <repository_name>
+    ```
+
+3. Create a new virtual environment.
+    ```bash
+    python3 -m venv venv_name
+    ```
+
+4. Activate the virtual environment.
+    ```bash
+    source venv_name/bin/activate
+    ```
+
+## Installing Dependencies
+
+1. Install the dependencies specified in the `requirements.txt` file.
+    ```bash
+    pip3 install -r requirements.txt
+    ```
+
+---
+
+### Fully Connected Neural Network (`nn.py`)
+
+#### Overview
+
+Defines a fully connected neural network (NN) using PyTorch.
+
+#### Configuration Options
+
+The YAML configuration files in the `cfgs/` directory can affect the architecture of the NN:
+
+- `input_features`: Sets the number of input features.
+- `num_classes`: Sets the number of output classes.
+- `fc_layers`: Specifies the number of neurons in each fully connected layer.
+
+#### Class Definition
+
+- `NN(nn.Module)`
+
+#### Methods
+
+- `__init__(self, cfg_file)`: Constructor that initializes the model based on the YAML configuration file.
+- `forward(self, x)`: Forward pass through the network.
+
+---
+
+### Convolutional Neural Network (`cnn.py`)
+
+#### Overview
+
+Defines a Convolutional Neural Network (CNN) using PyTorch.
+
+#### Configuration Options
+
+The YAML configuration files in the `cfgs/` directory can affect the architecture of the CNN:
+
+- `input_channels`: Sets the number of input channels.
+- `num_classes`: Sets the number of output classes.
+- `conv_layers`: Specifies the parameters for each convolutional layer.
+- `fc_layers`: Specifies the number of neurons in each fully connected layer.
+
+#### Class Definition
+
+- `CNN(nn.Module)`
+
+#### Methods
+
+- `__init__(self, cfg_file)`: Constructor that initializes the model based on the YAML configuration file.
+- `forward(self, x)`: Forward pass through the network.
+- `_get_flatten_size(self)`: Calculates the size of the flattened input for the fully connected layers.
 
 ---
 
@@ -72,58 +194,6 @@ The YAML configuration files in the `cfgs/` directory can affect various aspects
 - `get_transforms(transform_cfg)`: Generates a composition of transformations based on the provided configuration.
 - `test(model, testloader, wandb_run=None)`: Main function to test the model and optionally log metrics to wandb.
 - `run_test(net_cfg_path, test_cfg_path, wandb_run=None)`: Load configurations, initialize the model, and run the test.
-
----
-
-### Fully Connected Neural Network (`nn.py`)
-
-#### Overview
-
-Defines a fully connected neural network (NN) using PyTorch.
-
-#### Configuration Options
-
-The YAML configuration files in the `cfgs/` directory can affect the architecture of the NN:
-
-- `input_features`: Sets the number of input features.
-- `num_classes`: Sets the number of output classes.
-- `fc_layers`: Specifies the number of neurons in each fully connected layer.
-
-#### Class Definition
-
-- `NN(nn.Module)`
-
-#### Methods
-
-- `__init__(self, cfg_file)`: Constructor that initializes the model based on the YAML configuration file.
-- `forward(self, x)`: Forward pass through the network.
-
----
-
-### Convolutional Neural Network (`cnn.py`)
-
-#### Overview
-
-Defines a Convolutional Neural Network (CNN) using PyTorch.
-
-#### Configuration Options
-
-The YAML configuration files in the `cfgs/` directory can affect the architecture of the CNN:
-
-- `input_channels`: Sets the number of input channels.
-- `num_classes`: Sets the number of output classes.
-- `conv_layers`: Specifies the parameters for each convolutional layer.
-- `fc_layers`: Specifies the number of neurons in each fully connected layer.
-
-#### Class Definition
-
-- `CNN(nn.Module)`
-
-#### Methods
-
-- `__init__(self, cfg_file)`: Constructor that initializes the model based on the YAML configuration file.
-- `forward(self, x)`: Forward pass through the network.
-- `_get_flatten_size(self)`: Calculates the size of the flattened input for the fully connected layers.
 
 ---
 
