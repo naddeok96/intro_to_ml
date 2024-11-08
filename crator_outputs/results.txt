@@ -1,0 +1,6 @@
+Total dark region area: 51111 pixels of 1059022
+Dark region area ratio: 0.04826245347122156
+Total bright region area: 82294 pixels of 1059022
+Bright area ratio: 0.07770754526346006
+Total full crater area: 200376 pixels of 1059022
+Crater area ratio: 0.18920853391147682
